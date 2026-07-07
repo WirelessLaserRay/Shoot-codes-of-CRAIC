@@ -56,6 +56,13 @@ class navigation_demo:
         
         self.marker_cache = {}
         self.shoot_locked = False
+        
+        self.template_target_x = None
+        self.find_sub = rospy.Subscriber('/object_position', Point, self.find_cb, queue_size=1)
+
+    def find_cb(self, data):
+        """记录模版匹配的图像 x 坐标"""
+        self.template_target_x = data.x
 
     def ar_cb(self, data):
         """记录 AR 标签位姿并计算滤波后的速度"""
@@ -110,6 +117,41 @@ class navigation_demo:
         if (rospy.Time.now() - marker['stamp']).to_sec() > 0.8:
             return None
         return marker
+
+    def template_aim_and_shoot(self, timeout=10.0, burst=1):
+        """对准并射击：使用模版匹配的像素偏差进行微调对准"""
+        deadline = rospy.Time.now() + rospy.Duration(timeout)
+        rospy.loginfo("[Aim] Start template aiming for target 1")
+        
+        while not rospy.is_shutdown() and rospy.Time.now() < deadline:
+            if self.template_target_x is None:
+                self.pub.publish(Twist())
+                rospy.sleep(0.05)
+                continue
+            
+            # 假设图像中心是 320
+            error = self.template_target_x - 320.0
+            
+            if abs(error) <= 3.0:
+                rospy.loginfo("[Aim] Template centered (error=%.1f), shooting...", error)
+                self.shoot_burst(count=burst)
+                self.template_target_x = None
+                return True
+            else:
+                msg = Twist()
+                # P 控制比例，限幅在 0.25
+                msg.angular.z = -0.005 * error
+                msg.angular.z = max(-0.25, min(0.25, msg.angular.z))
+                
+                self.pub.publish(msg)
+                rospy.sleep(0.1)
+                self.pub.publish(Twist())
+                rospy.sleep(0.1)
+                
+        rospy.logwarn("[Aim] Template aiming timeout. Forcing shoot.")
+        self.shoot_burst(count=burst)
+        self.template_target_x = None
+        return False
 
     def aim_and_shoot(self, m_id, yaw_th, gain, timeout, lead_sec=0.0, burst=1, label="target", required_centered_frames=1):
         """对准并射击：使用预测位置和脉冲式转向"""
@@ -277,7 +319,7 @@ if __name__ == "__main__":
     # 任务点 1
     navi.goto(goals[0])
     rospy.sleep(1.0)
-    navi.shoot_burst(count=1, duration=0.15)
+    navi.template_aim_and_shoot(timeout=10.0, burst=2)
     
     # 任务点 2
     navi.goto(goals[1])

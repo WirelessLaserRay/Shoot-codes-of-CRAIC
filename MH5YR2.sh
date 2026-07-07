@@ -9,7 +9,7 @@ gnome-terminal --window -e 'bash -c "roscore; exec bash"' \
 --tab -e 'bash -c "sleep 8; source ~/MH5YR2/devel/setup.bash; rosrun robot_voice tts_subscribe; exec bash"' \
 --tab -e 'bash -c "cd /home/abot/MH5YR2/src/robot_slam/scripts/; python3 demo.py; exec bash"' \
 --tab -e 'bash -c "sleep 8; source ~/MH5YR2/devel/setup.bash; roslaunch robot_slam multi_goal.launch; exec bash"' \
-# --tab -e 'bash -c "sleep 3; source ~/MH5YR2/devel/setup.bash; roslaunch find_object_2d find_object_2d.launch; exec bash"' \
+--tab -e 'bash -c "sleep 3; source ~/MH5YR2/devel/setup.bash; roslaunch find_object_2d find_object_2d.launch; exec bash"' \
 
 
 
