@@ -1,0 +1,8 @@
+<launch>
+  <!-- 统一射击服务 -->
+  <node name="shoot_service" pkg="shoot_cmd" type="shoot_service.py" output="screen">
+    <param name="port" value="/dev/shoot" />
+    <param name="baudrate" value="9600" />
+    <param name="cooldown" value="2.0" />
+  </node>
+</launch>

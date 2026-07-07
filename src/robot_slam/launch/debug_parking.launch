@@ -1,0 +1,17 @@
+<launch>
+  <!-- Launch file for debugging and tuning parking waypoints sequentially -->
+  <node name="debug_parking" pkg="robot_slam" type="debug_parking.py" output="screen">
+      <!-- Modify these parameters to adjust target parking positions (X, Y, Yaw-angle-in-degrees) -->
+      <!-- Point index:        0,     1,      2,     3 -->
+      <param name="goalListX" value="  1.292,  1.288,  1.26, 0.52"/>
+      <param name="goalListY" value=" -0.402,  -1.666, -2.981, -2.902"/>
+      <param name="goalListYaw" value="0.06, 0.0,  2.0, -0.5"/>
+      <!-- Open-loop end zone backup parameters -->
+      <!-- linear velocity: negative means backup, positive means forward (m/s) -->
+      <param name="open_loop_linear_x" value="-0.25"/>
+      <!-- angular velocity: z-axis rotation (rad/s) -->
+      <param name="open_loop_angular_z" value="0.0"/>
+      <!-- duration: how many seconds to perform the open-loop motion -->
+      <param name="open_loop_duration" value="2.5"/>
+  </node>
+</launch>

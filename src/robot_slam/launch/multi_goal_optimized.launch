@@ -1,0 +1,18 @@
+<launch>
+  <!--
+    MH5YR2 优化版多点导航启动文件
+    使用 navigation_optimized.py (方案二 + 方案三)
+
+    航点说明:
+      goals[0]: 1号任务点 — 固定靶 (盲射, 不使用 find_object_2d)
+      goals[1]: 2号任务点 — 旋转靶 (Stop-and-Shoot AR)
+      goals[2]: 3号任务点 — 移动靶 (Stop-and-Shoot AR)
+      goals[3]: 终点
+  -->
+  <node name="multi_goal_optimized" pkg="robot_slam"
+        type="navigation_optimized.py" output="screen">
+      <param name="goalListX"   value="  1.24,  1.062,  0.945, 0.28"/>
+      <param name="goalListY"   value=" -0.473,  -1.695, -2.976, -2.98"/>
+      <param name="goalListYaw" value="0.0, 0.0,  0.0, 0.0"/>
+  </node>
+</launch>
